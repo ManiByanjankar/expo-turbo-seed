@@ -1,11 +1,13 @@
+import { useBottomPadding } from '@/hooks/useBottomNavigationPadding';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 const ReceiptHistory = () => {
+  const bottomPadding = useBottomPadding();
   const receipts = [
     {
-      amount: 2100,
+      amount: 80000,
       date: '21 July, 2024',
       projectName: 'Project Name demo',
       category: 'Category Name',
@@ -123,16 +125,29 @@ const ReceiptHistory = () => {
   );
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Receipt History</Text>
-      {receipts.map((receipt, index) => (
-        <ReceiptCard key={index} receipt={receipt} />
-      ))}
-    </ScrollView>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: bottomPadding }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        style={styles.container}
+      >
+        <Text style={styles.title}>Receipt History</Text>
+        {receipts.map((receipt, index) => (
+          <ReceiptCard key={index} receipt={receipt} />
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
+  flex: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: '#F7F7F7',

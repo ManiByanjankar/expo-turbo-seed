@@ -1,3 +1,4 @@
+import { useBottomPadding } from '@/hooks/useBottomNavigationPadding';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 import {
@@ -10,6 +11,8 @@ import {
 } from 'react-native';
 
 export default function ReceiptDetails() {
+  const bottomPadding = useBottomPadding();
+
   const attachments = [
     { id: 1, name: 'Invoice_2024_001.pdf' },
     { id: 2, name: 'Receipt_Details.pdf' },
@@ -29,8 +32,10 @@ export default function ReceiptDetails() {
       </View>
 
       <ScrollView
-        style={styles.scrollView}
+        contentContainerStyle={{ paddingBottom: bottomPadding }}
+        keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
+        style={styles.container}
       >
         {/* Main Card */}
         <View style={styles.mainCard}>

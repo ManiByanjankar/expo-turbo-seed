@@ -36,15 +36,15 @@ export default function TabLayout() {
           ),
         }}
       />
-      {/* <Tabs.Screen
+      <Tabs.Screen
         name="camera"
         options={{
-          title: 'Scanner',
+          title: 'Form',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="qrcode" color={color} />
           ),
         }}
-      /> */}
+      />
       <Tabs.Screen
         name="location"
         options={{
