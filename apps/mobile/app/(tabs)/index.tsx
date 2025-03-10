@@ -20,7 +20,7 @@ export default function HomeScreen() {
   useEffect(() => {
     setTimeout(() => {
       generateQRCode();
-    }, 2000);
+    }, 1000);
   }, []);
 
   const copyToClipboard = async () => {
@@ -45,10 +45,10 @@ export default function HomeScreen() {
     >
       <VStack className="space-y-4">
         {/* Greeting */}
-        <Text className="text-2xl font-semibold text-gray-800">
+        <Text className="text-xl font-semibold text-gray-800">
           Hello, {userName}
         </Text>
-        <Text className="text-3xl font-bold text-gray-900">
+        <Text className="text-xl font-bold text-gray-900">
           Welcome To Your Dashboard
         </Text>
 
@@ -59,8 +59,8 @@ export default function HomeScreen() {
           ) : (
             <Svg
               viewBox="0 0 256 256"
-              width="192"
-              height="192"
+              width="392"
+              height="392"
               dangerouslySetInnerHTML={{ __html: qrCodeSvg }}
             />
           )}
