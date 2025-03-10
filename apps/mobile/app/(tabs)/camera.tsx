@@ -1,46 +1,54 @@
-import { Button, ButtonText } from '@/components/ui/button';
 import {
-  FormControl,
-  FormControlError,
-  FormControlErrorIcon,
-  FormControlErrorText,
-  FormControlHelper,
-  FormControlHelperText,
-  FormControlLabel,
-  FormControlLabelText,
-} from '@/components/ui/form-control';
-import { HStack } from '@/components/ui/hstack';
-import { Input, InputField } from '@/components/ui/input';
-import {
+  Button,
+  ButtonText,
+  HStack,
+  Input,
+  InputField,
   Select,
   SelectBackdrop,
   SelectContent,
-  SelectDragIndicator,
-  SelectDragIndicatorWrapper,
   SelectIcon,
   SelectInput,
   SelectItem,
   SelectPortal,
   SelectTrigger,
-} from '@/components/ui/select';
-import { VStack } from '@/components/ui/vstack';
+  Textarea,
+  TextareaInput,
+  VStack,
+} from '@/components/ui';
+import {
+  FormControl,
+  FormControlError,
+  FormControlErrorText,
+  FormControlLabel,
+  FormControlLabelText,
+} from '@/components/ui/form-control';
 import { useBottomPadding } from '@/hooks/useBottomNavigationPadding';
-import React, { useState } from 'react';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 
-const ReceiptHistory = () => {
+export default function ReceiptHistory() {
   const bottomPadding = useBottomPadding();
-  const [selectedValue, setSelectedValue] = useState('');
-  const [isInvalid, setIsInvalid] = useState(false);
 
-  const handleSubmit = () => {
-    if (!selectedValue) {
-      setIsInvalid(true);
-    } else {
-      setIsInvalid(false);
-      console.log('Submitted value:', selectedValue);
-      setSelectedValue('');
-    }
+  // Use react-hook-form for validation
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      dropdown: '',
+      numberInput: '',
+      textInput: '',
+      textArea: '',
+    },
+  });
+
+  const onSubmit = (data: any) => {
+    console.log('Form Data:', data);
+    reset();
   };
 
   return (
@@ -51,77 +59,144 @@ const ReceiptHistory = () => {
         showsVerticalScrollIndicator={false}
         style={styles.container}
       >
-        <VStack className="w-full  p-4">
-          {/* Select Component with Validation */}
-          <FormControl isInvalid={isInvalid} isRequired>
+        <VStack className="w-full p-4">
+          <FormControl isInvalid={!!errors.dropdown}>
             <FormControlLabel>
-              <FormControlLabelText>Select an option</FormControlLabelText>
+              <FormControlLabelText>Select an Option</FormControlLabelText>
             </FormControlLabel>
-            <Select onValueChange={(value) => setSelectedValue(value)}>
-              <SelectTrigger variant="outline" size="md">
-                <SelectInput placeholder="Select option" />
-                <SelectIcon className="mr-3" />
-              </SelectTrigger>
-              <SelectPortal>
-                <SelectBackdrop />
-                <SelectContent>
-                  <SelectDragIndicatorWrapper>
-                    <SelectDragIndicator />
-                  </SelectDragIndicatorWrapper>
-                  <SelectItem label="UX Research" value="ux" />
-                  <SelectItem label="Web Development" value="web" />
-                  <SelectItem
-                    label="Cross Platform Development Process"
-                    value="Cross Platform Development Process"
-                  />
-                  <SelectItem label="UI Designing" value="ui" isDisabled />
-                  <SelectItem label="Backend Development" value="backend" />
-                </SelectContent>
-              </SelectPortal>
-            </Select>
-
-            {/* Helper Text */}
-            <FormControlHelper>
-              <FormControlHelperText>
-                Please select an option before submitting.
-              </FormControlHelperText>
-            </FormControlHelper>
-
-            {/* Error Message */}
-            {isInvalid && (
+            <Controller
+              control={control}
+              rules={{ required: 'This field is required' }}
+              render={({ field: { onChange, value } }) => (
+                <Select onValueChange={onChange}>
+                  <SelectTrigger variant="outline">
+                    <SelectInput placeholder="Select an option" value={value} />
+                    <SelectIcon />
+                  </SelectTrigger>
+                  <SelectPortal>
+                    <SelectBackdrop />
+                    <SelectContent>
+                      <SelectItem label="Option 1" value="option1" />
+                      <SelectItem label="Option 2" value="option2" />
+                      <SelectItem label="Option 3" value="option3" />
+                    </SelectContent>
+                  </SelectPortal>
+                </Select>
+              )}
+              name="dropdown"
+            />
+            {errors.dropdown && (
               <FormControlError>
-                <FormControlErrorIcon />
                 <FormControlErrorText>
-                  Selection is required.
+                  {errors.dropdown.message}
                 </FormControlErrorText>
               </FormControlError>
             )}
           </FormControl>
-          <FormControl isInvalid={false} isRequired>
+
+          <FormControl isInvalid={!!errors.numberInput} className="mt-4">
             <FormControlLabel>
-              <FormControlLabelText>Enter Text</FormControlLabelText>
+              <FormControlLabelText>Enter a Number</FormControlLabelText>
             </FormControlLabel>
-            <Input
-              variant="outline"
-              size="md"
-              isDisabled={false}
-              isInvalid={true}
-              isReadOnly={false}
-            >
-              <InputField placeholder="Enter Text here..." />
-            </Input>
+            <Controller
+              control={control}
+              rules={{
+                required: 'Number is required',
+                pattern: { value: /^[0-9]+$/, message: 'Enter a valid number' },
+              }}
+              render={({ field: { onChange, value } }) => (
+                <Input variant="outline">
+                  <InputField
+                    placeholder="Enter number..."
+                    value={value}
+                    keyboardType="numeric"
+                    onChangeText={onChange}
+                  />
+                </Input>
+              )}
+              name="numberInput"
+            />
+            {errors.numberInput && (
+              <FormControlError>
+                <FormControlErrorText>
+                  {errors.numberInput.message}
+                </FormControlErrorText>
+              </FormControlError>
+            )}
           </FormControl>
-          {/* Button Row */}
-          <HStack className="mt-4">
-            <Button size="lg" variant="outline" action="positive">
+
+          <FormControl isInvalid={!!errors.textInput} className="mt-4">
+            <FormControlLabel>
+              <FormControlLabelText>Text Input</FormControlLabelText>
+            </FormControlLabel>
+            <Controller
+              control={control}
+              rules={{
+                required: 'Text is required',
+                minLength: { value: 3, message: 'At least 3 characters' },
+              }}
+              render={({ field: { onChange, value } }) => (
+                <Input variant="outline">
+                  <InputField
+                    placeholder="Enter text..."
+                    value={value}
+                    onChangeText={onChange}
+                  />
+                </Input>
+              )}
+              name="textInput"
+            />
+            {errors.textInput && (
+              <FormControlError>
+                <FormControlErrorText>
+                  {errors.textInput.message}
+                </FormControlErrorText>
+              </FormControlError>
+            )}
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.textArea} className="mt-4">
+            <FormControlLabel>
+              <FormControlLabelText>Description</FormControlLabelText>
+            </FormControlLabel>
+            <Controller
+              control={control}
+              rules={{ required: 'This field cannot be empty' }}
+              render={({ field: { onChange, value } }) => (
+                <Textarea size="md" className="w-full">
+                  <TextareaInput
+                    placeholder="Enter details..."
+                    value={value}
+                    onChangeText={onChange}
+                  />
+                </Textarea>
+              )}
+              name="textArea"
+            />
+            {errors.textArea && (
+              <FormControlError>
+                <FormControlErrorText>
+                  {errors.textArea.message}
+                </FormControlErrorText>
+              </FormControlError>
+            )}
+          </FormControl>
+
+          {/* Buttons */}
+          <HStack className="mt-6 w-full">
+            <Button
+              size="lg"
+              variant="outline"
+              className="flex-1"
+              onPress={() => reset()}
+            >
               <ButtonText>Cancel</ButtonText>
             </Button>
             <Button
-              className="ml-2"
+              className="ml-2 flex-1"
               size="lg"
               variant="solid"
-              action="primary"
-              onPress={handleSubmit}
+              onPress={handleSubmit(onSubmit)}
             >
               <ButtonText className="text-white">Submit</ButtonText>
             </Button>
@@ -130,7 +205,7 @@ const ReceiptHistory = () => {
       </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -142,5 +217,3 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 });
-
-export default ReceiptHistory;
